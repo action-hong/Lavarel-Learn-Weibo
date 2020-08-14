@@ -9,11 +9,18 @@
       </div>
     </div>
     <div class="card-body">
+
+      @include('shared._errors')
+
       <form method="POST" action="{{ route('users.store') }}">
         @csrf
+        {{-- <div class="form-group">
+          <label for="test">测试:</label>
+          <input type="text" name="test" class="form-control" value="{{ old('namewe') }}">
+        </div> --}}
         <div class="form-group">
           <label for="name">名称:</label>
-          <input type="text" name="name" class="form-control" value="{{ old('name') }}">
+          <input type="text" name="name" class="form-control" value="{{ old('namewe') }}">
         </div>
         <div class="form-group">
           <label for="email">邮箱:</label>
