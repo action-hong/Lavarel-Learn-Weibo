@@ -11,7 +11,7 @@ class UserController extends Controller
 
     public function __construct() {
       $this->middleware('auth', [
-        'except' => ['show', 'store', 'create']
+        'except' => ['show', 'store', 'create', 'index']
       ]);
 
       // 
@@ -19,6 +19,12 @@ class UserController extends Controller
         // 我也不懂为毛之前写成 'only' > ['create'] 导致所有方法都只能是游客下访问
         'only' => ['create']
       ]);
+    }
+
+    public function index()
+    {
+      $users = User::paginate(10);
+      return view('users.index', compact('users'));
     }
 
     //
