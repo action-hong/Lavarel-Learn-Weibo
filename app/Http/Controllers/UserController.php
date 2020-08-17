@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
 
     public function __construct() {
       $this->middleware('auth', [
-        'except' => ['show', 'store', 'create', 'index']
+        'except' => ['show', 'store', 'create', 'index', 'confirmEmail']
       ]);
 
       // 
@@ -53,9 +54,9 @@ class UserController extends Controller
         'password' => bcrypt($request->password)
       ]);
 
-      Auth::login($user);
-      session()->flash('success', '欢迎, 您将在这里开启一段新的旅程~');
-      return redirect()->route('users.show', [$user]);
+      $this->sendEmailConfirmationTo($user);
+      session()->flash('success', '注册成功, 请去邮箱内激活');
+      return redirect('/');
     }
 
     public function edit(User $user)
@@ -94,4 +95,31 @@ class UserController extends Controller
       return back();
     }
 
+    public function confirmEmail($token)
+    {
+      # code...
+      $user = User::where('activation_token', $token)->firstOrFail();
+
+      $user->activated = true;
+      $user->activation_token = null;
+      $user->save();
+
+      Auth::login($user);
+      session()->flash('success', '恭喜您, 激活成功!');
+      return redirect()->route('users.show', [$user]);
+    }
+
+    protected function sendEmailConfirmationTo($user)
+    {
+      $view = 'emails.confirm';
+      $data = compact('user');
+      $form = 'kkopitehong@gmail.com';
+      $name = 'kkopite';
+      $to = $user->email;
+      $subject = '感谢注册 Weibo 应该, 请确认您的邮箱';
+
+      Mail::send($view, $data, function ($message) use ($form, $name, $to, $subject) {
+        $message->from($form, $name)->to($to)->subject($subject);
+      });
+    }
 }
