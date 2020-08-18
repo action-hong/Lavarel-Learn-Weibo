@@ -56,6 +56,8 @@ class User extends Authenticatable
 
     public function statuses()
     {
+      // 默认外键就是 模型名加上_id, 本地键就是id了, 所以不用传
+      // return $this->hasMany(Status::class, 'user_id', 'id');
       return $this->hasMany(Status::class);
     }
 }
