@@ -27,8 +27,12 @@ class StatusesController extends Controller
       return redirect()->back();
     }
 
-    public function destory(Status $status)
+    public function destroy(Status $status)
     {
       # code...
+      $this->authorize('destroy', $status);
+      $status->delete();
+      session()->flash('success', '微博已经被删除');
+      return redirect()->back();
     }
 }
