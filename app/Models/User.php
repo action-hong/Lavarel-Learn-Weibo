@@ -65,4 +65,43 @@ class User extends Authenticatable
     {
       return $this->statuses()->orderBy('created_at', 'desc');
     }
+
+    // 获取粉丝
+    public function followers()
+    {
+      // 不然默认表回事 user_user
+      return $this->belongsToMany(User::class, 'follwers', 'user_id', 'follower_id');
+    }
+
+    // 获取关注的人
+    public function followings()
+    {
+      return $this->belongsToMany(User::class, 'followers', 'follower_id', 'user_id');
+    }
+
+    // 关注
+    public function follow($user_ids)
+    {
+      if (!is_array($user_ids)) {
+        // 那不是变成['user_ids' => xx] 了?
+        $user_ids = compact('user_ids');
+      }
+      $this->followings()->sync($user_ids, false);
+    }
+
+    public function unfollowe($user_ids)
+    {
+      if (!is_array($user_ids)) {
+        $user_ids = compact('user_ids');
+      }
+      $this->followings()->detach($user_ids);
+    }
+
+    public function isFollowing($user_id) 
+    {
+      // 定义了followings方法  直接访问返回Eloquent集合, 这是laravel Eloquent提供的动态属性功能
+      return $this->followings->contains($user_id);
+    }
+
+
 }
