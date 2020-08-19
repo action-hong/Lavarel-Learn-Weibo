@@ -70,7 +70,7 @@ class User extends Authenticatable
     public function followers()
     {
       // 不然默认表回事 user_user
-      return $this->belongsToMany(User::class, 'follwers', 'user_id', 'follower_id');
+      return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id');
     }
 
     // 获取关注的人
